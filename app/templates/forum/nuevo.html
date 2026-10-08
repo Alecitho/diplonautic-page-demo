@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Nuevo hilo{% endblock %}
+{% block content %}
+<section class="page-head">
+  <div class="container narrow">
+    <p class="crumbs"><a href="{{ url_for('forum.index') }}">Foro interno</a> / Nuevo hilo</p>
+    <h1>Nuevo hilo</h1>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container narrow">
+    <form class="card form" method="post">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <label>Título
+        <input type="text" name="title" value="{{ form.title }}" required minlength="5" maxlength="{{ titulo_max }}"
+               placeholder="Ej.: Fallo de arranque en compresor de nevera" autofocus>
+      </label>
+      <fieldset class="radio-group">
+        <legend>Categoría</legend>
+        {% for key, label in categorias.items() %}
+          <label class="radio-pill cat-{{ key }}">
+            <input type="radio" name="category" value="{{ key }}" {{ 'checked' if form.category == key }} required>
+            <span>{{ label }}</span>
+          </label>
+        {% endfor %}
+      </fieldset>
+      <label>Mensaje <span class="hint">Describe el problema, equipo y embarcación. Máx. {{ texto_max }} caracteres.</span>
+        <textarea name="body" rows="9" required minlength="10" maxlength="{{ texto_max }}">{{ form.body }}</textarea>
+      </label>
+      <div class="form-actions">
+        <button class="btn btn-primary" type="submit">Publicar hilo</button>
+        <a class="btn btn-outline" href="{{ url_for('forum.index') }}">Cancelar</a>
+      </div>
+    </form>
+  </div>
+</section>
+{% endblock %}

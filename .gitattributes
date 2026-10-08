@@ -1,0 +1,10 @@
+# Normaliza finales de línea en el repositorio
+* text=auto
+
+# Los scripts de Windows necesitan CRLF para que cmd.exe interprete bien las etiquetas
+*.bat text eol=crlf
+
+# Binarios
+*.jpg binary
+*.png binary
+*.pdf binary

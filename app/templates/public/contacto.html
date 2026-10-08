@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Contacto{% endblock %}
+{% block content %}
+<section class="page-head">
+  <div class="container">
+    <h1>Contacto</h1>
+    <p>Cuéntanos qué necesita tu embarcación y te respondemos en menos de 24 horas.</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container split split-form">
+    <form class="card form" method="post" action="{{ url_for('public.contacto') }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <div class="form-row">
+        <label>Nombre<input type="text" name="nombre" required autocomplete="name"></label>
+        <label>Teléfono<input type="tel" name="telefono" autocomplete="tel"></label>
+      </div>
+      <label>Correo electrónico<input type="email" name="email" required autocomplete="email"></label>
+      <label>Servicio
+        <select name="servicio">
+          <option>Refrigeración marina</option>
+          <option>Climatización</option>
+          <option>Electricidad a bordo</option>
+          <option>Fontanería y potabilizadoras</option>
+          <option>Electrónica náutica</option>
+          <option>Mantenimiento integral</option>
+        </select>
+      </label>
+      <label>Mensaje<textarea name="mensaje" rows="5" required></textarea></label>
+      <button class="btn btn-primary" type="submit">Enviar mensaje</button>
+      <p class="muted small">Formulario de demostración: no se envía ni se guarda ningún dato.</p>
+    </form>
+
+    <aside class="contact-info">
+      <div class="contact-item">{{ icon("pin") }}<div><strong>Taller central</strong><span>Puerto Deportivo, Muelle 3 · 46024 Valencia</span></div></div>
+      <div class="contact-item">{{ icon("phone") }}<div><strong>Teléfono</strong><span>+34 960 000 000</span></div></div>
+      <div class="contact-item">{{ icon("mail") }}<div><strong>Correo</strong><span>info@diplonautic.example</span></div></div>
+      <div class="contact-item">{{ icon("clock") }}<div><strong>Horario</strong><span>L–V 8:00–18:00 · Urgencias 24 h</span></div></div>
+    </aside>
+  </div>
+</section>
+{% endblock %}

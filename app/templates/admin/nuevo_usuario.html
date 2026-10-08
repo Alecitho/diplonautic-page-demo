@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Nuevo usuario{% endblock %}
+{% block content %}
+<section class="page-head">
+  <div class="container narrow">
+    <h1>Nuevo usuario</h1>
+    <p>Alta directa de un empleado por parte de un administrador.</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container narrow">
+    <form class="card form" method="post">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <label>Nombre completo
+        <input type="text" name="name" value="{{ form.name }}" required minlength="3">
+      </label>
+      <label>Correo corporativo
+        <input type="email" name="email" value="{{ form.email }}" required
+               placeholder="nombre@{{ config.ALLOWED_EMAIL_DOMAIN or 'empresa.com' }}">
+      </label>
+      <div class="form-row">
+        <label>Departamento
+          <select name="department" required>
+            <option value="">Selecciona…</option>
+            {% for d in departamentos %}<option {{ 'selected' if form.department == d }}>{{ d }}</option>{% endfor %}
+          </select>
+        </label>
+        <label>Rol
+          <select name="role">
+            {% for r in roles %}<option value="{{ r }}" {{ 'selected' if form.role == r }}>{{ r|capitalize }}</option>{% endfor %}
+          </select>
+        </label>
+      </div>
+      <label>Contraseña inicial <span class="hint">Mínimo 8 caracteres con letras y números. Comunícala al empleado por un canal seguro.</span>
+        <input type="password" name="password" required minlength="8" autocomplete="new-password">
+      </label>
+      <label class="checkbox">
+        <input type="checkbox" name="verified" {{ 'checked' if form.verified }}>
+        Marcar como verificado (el administrador responde de la identidad del empleado)
+      </label>
+      <div class="form-actions">
+        <button class="btn btn-primary" type="submit">Crear usuario</button>
+        <a class="btn btn-outline" href="{{ url_for('admin.users') }}">Cancelar</a>
+      </div>
+    </form>
+  </div>
+</section>
+{% endblock %}

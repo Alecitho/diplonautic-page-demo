@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}Área privada{% endblock %}
+{% block content %}
+<section class="page-head">
+  <div class="container">
+    <h1>Hola, {{ g.user.name.split()[0] }}</h1>
+    <p>Área privada para el equipo de Diplonautic.</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    {% if not g.user.is_verified %}
+      <div class="card notice notice-warn">
+        <div>
+          <h2>Verifica tu correo para acceder al foro</h2>
+          <p>Tu cuenta está <strong>pendiente de verificación</strong>. Mientras tanto puedes entrar en el
+            área privada, pero no leer ni escribir en el foro interno. Si no encuentras el correo,
+            solicita uno nuevo o pide a un administrador que verifique tu cuenta.</p>
+        </div>
+        <form method="post" action="{{ url_for('auth.resend_verification') }}">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <button class="btn btn-primary" type="submit">{{ icon("mail", 18) }} Reenviar correo de verificación</button>
+        </form>
+      </div>
+    {% endif %}
+
+    <div class="dash-grid">
+      <article class="card account-card">
+        <h3>Mi cuenta</h3>
+        <dl>
+          <dt>Nombre</dt><dd>{{ g.user.name }}</dd>
+          <dt>Correo</dt><dd>{{ g.user.email }}</dd>
+          <dt>Departamento</dt><dd>{{ g.user.department or "—" }}</dd>
+          <dt>Rol</dt><dd><span class="badge {{ 'badge-admin' if g.user.role == 'admin' else 'badge-muted' }}">{{ g.user.role|capitalize }}</span></dd>
+          <dt>Estado</dt>
+          <dd>{% if g.user.is_verified %}<span class="badge badge-ok">{{ icon("check", 14) }} Verificado</span>
+              {% else %}<span class="badge badge-warn">Pendiente de verificación</span>{% endif %}</dd>
+          <dt>Último acceso</dt><dd>{{ g.user.last_login_at|fecha }}</dd>
+        </dl>
+      </article>
+
+      {% if g.user.is_verified %}
+      <a class="card dash-link" href="{{ url_for('forum.index') }}">
+        <span class="service-icon">{{ icon("chat", 28) }}</span>
+        <h3>Foro interno</h3>
+        <p>Consulta avisos, plantea dudas técnicas y comparte incidencias con el equipo.</p>
+      </a>
+      {% else %}
+      <div class="card dash-link is-locked" aria-disabled="true">
+        <span class="service-icon">{{ icon("lock", 28) }}</span>
+        <h3>Foro interno</h3>
+        <p>Disponible cuando verifiques tu correo electrónico.</p>
+      </div>
+      {% endif %}
+
+      {% if g.user.role == "admin" and g.user.is_verified %}
+      <a class="card dash-link" href="{{ url_for('admin.users') }}">
+        <span class="service-icon">{{ icon("users", 28) }}</span>
+        <h3>Gestión de usuarios</h3>
+        <p>Da de alta empleados, verifica cuentas, cambia roles y desactiva accesos.</p>
+      </a>
+      {% endif %}
+    </div>
+  </div>
+</section>
+{% endblock %}

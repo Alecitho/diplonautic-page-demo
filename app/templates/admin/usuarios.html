@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% block title %}Gestión de usuarios{% endblock %}
+{% block content %}
+<section class="page-head">
+  <div class="container page-head-row">
+    <div>
+      <h1>Gestión de usuarios</h1>
+      <p>Alta, verificación, roles y acceso de los empleados.</p>
+    </div>
+    <a class="btn btn-light" href="{{ url_for('admin.new_user') }}">{{ icon("plus", 18) }} Nuevo usuario</a>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <nav class="tabs" aria-label="Filtrar usuarios">
+      {% for key, (label, _cond) in filtros.items() %}
+        <a href="{{ url_for('admin.users', estado=key) }}" class="{{ 'active' if filtro == key }}">
+          {{ label }} <span class="count">{{ counts[key] }}</span>
+        </a>
+      {% endfor %}
+    </nav>
+
+    <div class="table-wrap card">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Empleado</th>
+            <th>Departamento</th>
+            <th>Rol</th>
+            <th>Estado</th>
+            <th>Último acceso</th>
+            <th class="right">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for u in users %}
+          {% set yo = u.id == g.user.id %}
+          <tr class="{{ 'row-off' if not u.is_active }}">
+            <td>
+              <strong>{{ u.name }}</strong>{% if yo %} <span class="muted small">(tú)</span>{% endif %}
+              <div class="muted small">{{ u.email }}</div>
+            </td>
+            <td>{{ u.department or "—" }}</td>
+            <td>
+              <span class="badge {{ 'badge-admin' if u.role == 'admin' else 'badge-muted' }}">{{ u.role|capitalize }}</span>
+            </td>
+            <td><div class="badges">
+              {% if u.is_verified %}<span class="badge badge-ok">Verificado</span>
+              {% else %}<span class="badge badge-warn">No verificado</span>{% endif %}
+              {% if not u.is_active %}<span class="badge badge-off">Desactivado</span>{% endif %}
+            </div></td>
+            <td class="small nowrap">{{ u.last_login_at|fecha or "Nunca" }}</td>
+            <td><div class="actions">
+              {% if not u.is_verified %}
+                <form method="post" action="{{ url_for('admin.verify_user', user_id=u.id) }}">
+                  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                  <input type="hidden" name="estado" value="{{ filtro }}">
+                  <button class="btn btn-sm btn-primary" type="submit">Verificar</button>
+                </form>
+                <form method="post" action="{{ url_for('admin.send_verification', user_id=u.id) }}">
+                  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                  <button class="btn btn-sm btn-outline" type="submit" title="Generar un nuevo correo de verificación">Enviar enlace</button>
+                </form>
+              {% endif %}
+              {% if not yo %}
+                <form method="post" action="{{ url_for('admin.change_role', user_id=u.id) }}">
+                  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                  <input type="hidden" name="estado" value="{{ filtro }}">
+                  <input type="hidden" name="role" value="{{ 'empleado' if u.role == 'admin' else 'admin' }}">
+                  <button class="btn btn-sm btn-outline" type="submit">
+                    {{ "Quitar admin" if u.role == "admin" else "Hacer admin" }}
+                  </button>
+                </form>
+                <form method="post" action="{{ url_for('admin.toggle_active', user_id=u.id) }}"
+                      {% if u.is_active %}data-confirm="¿Desactivar la cuenta de {{ u.name }}? No podrá iniciar sesión."{% endif %}>
+                  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                  <input type="hidden" name="estado" value="{{ filtro }}">
+                  <button class="btn btn-sm {{ 'btn-danger' if u.is_active else 'btn-outline' }}" type="submit">
+                    {{ "Desactivar" if u.is_active else "Reactivar" }}
+                  </button>
+                </form>
+              {% endif %}
+            </div></td>
+          </tr>
+        {% else %}
+          <tr><td colspan="6" class="center muted">No hay usuarios en este filtro.</td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block title %}Inicio{% endblock %}
+{% block body_class %}home{% endblock %}
+{% block content %}
+<section class="hero">
+  <div class="container hero-inner">
+    <div class="hero-text">
+      <p class="eyebrow">Servicio técnico náutico desde 2009</p>
+      <h1>Sistemas a bordo que funcionan,<br>travesía tras travesía.</h1>
+      <p class="lead">Reparamos e instalamos refrigeración, climatización, electricidad y electrónica
+        para embarcaciones de recreo y profesionales en todo el litoral mediterráneo.</p>
+      <div class="hero-actions">
+        <a class="btn btn-light" href="{{ url_for('public.servicios') }}">Ver servicios</a>
+        <a class="btn btn-ghost-light" href="{{ url_for('public.contacto') }}">Solicitar presupuesto</a>
+      </div>
+    </div>
+    <ul class="hero-stats" aria-label="Datos de la empresa">
+      <li><strong>+1.200</strong><span>embarcaciones atendidas</span></li>
+      <li><strong>24 h</strong><span>asistencia urgente en puerto</span></li>
+      <li><strong>18</strong><span>técnicos certificados</span></li>
+    </ul>
+  </div>
+  <svg class="hero-wave" viewBox="0 0 1440 120" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M0 64c120 28 240 42 360 32S600 52 720 48s240 12 360 28 240 20 360 4v40H0z"/>
+  </svg>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="section-head">
+      <h2>Qué hacemos</h2>
+      <p>Un único equipo técnico para todos los sistemas de tu embarcación.</p>
+    </div>
+    <div class="cards">
+      {% for s in servicios %}
+      <article class="card service-card">
+        <span class="service-icon">{{ icon(s.icono, 28) }}</span>
+        <h3>{{ s.titulo }}</h3>
+        <p>{{ s.texto }}</p>
+      </article>
+      {% endfor %}
+    </div>
+    <p class="center"><a class="btn btn-outline" href="{{ url_for('public.servicios') }}">Todos los servicios</a></p>
+  </div>
+</section>
+
+<section class="section section-alt">
+  <div class="container split">
+    <div>
+      <h2>Sobre Diplonautic</h2>
+      <p>Nacimos en un pequeño taller del puerto de Valencia con una idea sencilla: que el armador
+        tenga un único interlocutor técnico para todo lo que hay a bordo. Hoy contamos con talleres
+        en Valencia, Dénia y Palma, y con unidades móviles que se desplazan a cualquier amarre.</p>
+      <ul class="checklist">
+        <li>{{ icon("check", 18) }} Técnicos certificados en gases fluorados y baja tensión</li>
+        <li>{{ icon("check", 18) }} Garantía de 2 años en todas las instalaciones</li>
+        <li>{{ icon("check", 18) }} Informe técnico digital tras cada intervención</li>
+      </ul>
+    </div>
+    <div class="quote-card">
+      <p>“Nos instalaron la desalinizadora y el aire acondicionado antes de una travesía de tres semanas.
+        Cero incidencias.”</p>
+      <span>— Marta R., armadora del velero <em>Tramontana</em></span>
+    </div>
+  </div>
+</section>
+
+<section class="section cta">
+  <div class="container cta-inner">
+    <div>
+      <h2>¿Eres parte del equipo?</h2>
+      <p>Accede al área privada para consultar avisos y compartir incidencias técnicas en el foro interno.</p>
+    </div>
+    {% if g.user %}
+      <a class="btn btn-primary" href="{{ url_for('auth.area') }}">Ir al área privada</a>
+    {% else %}
+      <a class="btn btn-primary" href="{{ url_for('auth.login') }}">{{ icon("lock", 18) }} Acceso empleados</a>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

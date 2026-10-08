@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Registro de empleados{% endblock %}
+{% block content %}
+<section class="auth-wrap">
+  <div class="card auth-card auth-card-wide">
+    <span class="auth-icon">{{ icon("user", 28) }}</span>
+    <h1>Registro de empleados</h1>
+    <p class="muted">Tras registrarte recibirás un correo para verificar la cuenta. Hasta entonces
+      no podrás acceder al foro interno.</p>
+    <form class="form" method="post">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <label>Nombre completo
+        <input type="text" name="name" value="{{ form.name }}" required minlength="3" autocomplete="name">
+      </label>
+      <div class="form-row">
+        <label>Correo corporativo
+          <input type="email" name="email" value="{{ form.email }}" required autocomplete="email"
+                 placeholder="nombre@{{ config.ALLOWED_EMAIL_DOMAIN or 'empresa.com' }}">
+        </label>
+        <label>Departamento
+          <select name="department" required>
+            <option value="">Selecciona…</option>
+            {% for d in departamentos %}
+              <option {{ 'selected' if form.department == d }}>{{ d }}</option>
+            {% endfor %}
+          </select>
+        </label>
+      </div>
+      <div class="form-row">
+        <label>Contraseña
+          <input type="password" name="password" required minlength="8" autocomplete="new-password">
+          <span class="hint">Mínimo 8 caracteres con letras y números</span>
+        </label>
+        <label>Repite la contraseña
+          <input type="password" name="password2" required minlength="8" autocomplete="new-password">
+        </label>
+      </div>
+      <button class="btn btn-primary" type="submit">Crear cuenta</button>
+    </form>
+    <p class="auth-alt">¿Ya tienes cuenta? <a href="{{ url_for('auth.login') }}">Inicia sesión</a></p>
+  </div>
+</section>
+{% endblock %}

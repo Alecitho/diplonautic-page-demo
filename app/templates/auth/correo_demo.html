@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Verifica tu correo{% endblock %}
+{% block content %}
+<section class="auth-wrap">
+  <div class="auth-card auth-card-wide">
+    <div class="demo-note">
+      <strong>Modo DEMO:</strong> la aplicación no tiene servidor de correo configurado, así que
+      mostramos aquí el mensaje que se enviaría a <strong>{{ user.email }}</strong>.
+    </div>
+    <article class="email-mock" aria-label="Correo simulado">
+      <header>
+        <div><span class="muted">De:</span> no-responder@diplonautic.com</div>
+        <div><span class="muted">Para:</span> {{ user.email }}</div>
+        <div><span class="muted">Asunto:</span> Verifica tu cuenta de empleado</div>
+      </header>
+      <div class="email-body">
+        <p>Hola {{ user.name.split()[0] }},</p>
+        <p>Para activar tu acceso al foro interno de Diplonautic, confirma tu correo pulsando el
+          siguiente botón. El enlace caduca en {{ horas }} horas.</p>
+        <p><a class="btn btn-primary" href="{{ path }}">{{ icon("check", 18) }} Verificar mi cuenta</a></p>
+        <p class="small muted break">Si el botón no funciona, copia este enlace: {{ link }}</p>
+      </div>
+    </article>
+  </div>
+</section>
+{% endblock %}

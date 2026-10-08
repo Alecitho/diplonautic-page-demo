@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %}Foro interno{% endblock %}
+{% block content %}
+<section class="page-head">
+  <div class="container page-head-row">
+    <div>
+      <h1>Foro interno</h1>
+      <p>Dudas, avisos e incidencias técnicas del equipo.</p>
+    </div>
+    <a class="btn btn-light" href="{{ url_for('forum.new_thread') }}">{{ icon("plus", 18) }} Nuevo hilo</a>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="forum-toolbar">
+      <nav class="tabs" aria-label="Filtrar por categoría">
+        <a href="{{ url_for('forum.index', q=q or None) }}" class="{{ 'active' if not categoria }}">Todos</a>
+        {% for key, label in categorias.items() %}
+          <a href="{{ url_for('forum.index', categoria=key, q=q or None) }}" class="{{ 'active' if categoria == key }}">{{ label }}</a>
+        {% endfor %}
+      </nav>
+      <form class="search" method="get" role="search">
+        {% if categoria %}<input type="hidden" name="categoria" value="{{ categoria }}">{% endif %}
+        <label class="sr-only" for="q">Buscar en el foro</label>
+        <input id="q" type="search" name="q" value="{{ q }}" placeholder="Buscar hilos…">
+        <button class="btn btn-outline btn-sm" type="submit">{{ icon("search", 16) }}<span class="sr-only">Buscar</span></button>
+      </form>
+    </div>
+
+    {% if q %}<p class="muted">{{ total }} resultado{{ "s" if total != 1 }} para «{{ q }}» · <a href="{{ url_for('forum.index', categoria=categoria or None) }}">Quitar búsqueda</a></p>{% endif %}
+
+    <div class="thread-list card">
+      <div class="thread-head" aria-hidden="true">
+        <span>Tema</span><span>Respuestas</span><span>Última actividad</span>
+      </div>
+      {% for t in threads %}
+        <article class="thread-row {{ 'is-pinned' if t.is_pinned }}">
+          <div class="thread-main">
+            <div class="thread-tags">
+              {% if t.is_pinned %}<span class="badge badge-admin">{{ icon("pinned", 12) }} Fijado</span>{% endif %}
+              <span class="badge cat-{{ t.category }}">{{ categorias[t.category] }}</span>
+              {% if t.is_closed %}<span class="badge badge-muted">{{ icon("lock", 12) }} Cerrado</span>{% endif %}
+            </div>
+            <h2 class="thread-title"><a href="{{ url_for('forum.thread', thread_id=t.id) }}">{{ t.title }}</a></h2>
+            <p class="thread-meta">Por <strong>{{ t.author_name }}</strong> · {{ t.created_at|fecha }}</p>
+          </div>
+          <div class="thread-count">{{ icon("chat", 16) }} {{ t.replies }}</div>
+          <div class="thread-last small">
+            {{ t.last_activity_at|fecha }}
+            {% if t.last_author %}<span class="muted">por {{ t.last_author }}</span>{% endif %}
+          </div>
+        </article>
+      {% else %}
+        <div class="empty">
+          <p>No hay hilos {{ "que coincidan con la búsqueda" if q or categoria else "todavía" }}.</p>
+          <a class="btn btn-primary" href="{{ url_for('forum.new_thread') }}">Crear el primero</a>
+        </div>
+      {% endfor %}
+    </div>
+
+    {% if paginas > 1 %}
+      <nav class="pagination" aria-label="Paginación">
+        {% for p in range(1, paginas + 1) %}
+          <a href="{{ url_for('forum.index', pagina=p, categoria=categoria or None, q=q or None) }}"
+             class="{{ 'active' if p == pagina }}" {% if p == pagina %}aria-current="page"{% endif %}>{{ p }}</a>
+        {% endfor %}
+      </nav>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

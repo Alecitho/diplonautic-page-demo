@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Acceso empleados{% endblock %}
+{% block content %}
+<section class="auth-wrap">
+  <div class="card auth-card">
+    <span class="auth-icon">{{ icon("lock", 28) }}</span>
+    <h1>Acceso empleados</h1>
+    <p class="muted">Entra con tu correo corporativo para acceder al foro interno.</p>
+    <form class="form" method="post">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <label>Correo corporativo
+        <input type="email" name="email" value="{{ email }}" required autofocus autocomplete="username"
+               placeholder="nombre@diplonautic.com">
+      </label>
+      <label>Contraseña
+        <input type="password" name="password" required autocomplete="current-password">
+      </label>
+      <button class="btn btn-primary" type="submit">Iniciar sesión</button>
+    </form>
+    <p class="auth-alt">¿Aún no tienes cuenta? <a href="{{ url_for('auth.register') }}">Regístrate con tu correo corporativo</a></p>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% block title %}{{ thread.title }}{% endblock %}
+
+{% macro author_line(name, department, role, fecha_iso) -%}
+  <div class="post-author">
+    <span class="avatar" aria-hidden="true">{{ name[0] }}</span>
+    <div>
+      <strong>{{ name }}</strong>
+      {% if role == "admin" %}<span class="badge badge-admin">Admin</span>{% endif %}
+      <div class="muted small">{{ department or "" }} · {{ fecha_iso|fecha }}</div>
+    </div>
+  </div>
+{%- endmacro %}
+
+{% block content %}
+<section class="page-head">
+  <div class="container narrow">
+    <p class="crumbs"><a href="{{ url_for('forum.index') }}">Foro interno</a> / {{ categorias[thread.category] }}</p>
+    <div class="thread-tags">
+      {% if thread.is_pinned %}<span class="badge badge-admin">{{ icon("pinned", 12) }} Fijado</span>{% endif %}
+      <span class="badge cat-{{ thread.category }}">{{ categorias[thread.category] }}</span>
+      {% if thread.is_closed %}<span class="badge badge-muted">{{ icon("lock", 12) }} Cerrado</span>{% endif %}
+    </div>
+    <h1>{{ thread.title }}</h1>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container narrow">
+    <article class="card post post-op">
+      {{ author_line(thread.author_name, thread.author_department, thread.author_role, thread.created_at) }}
+      <div class="post-body">{{ thread.body }}</div>
+
+      {% if can_moderate(thread.author_id) %}
+      <div class="post-tools">
+        {% if g.user.role == "admin" %}
+          <form method="post" action="{{ url_for('forum.toggle_pin', thread_id=thread.id) }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button class="btn btn-sm btn-outline" type="submit">{{ icon("pinned", 14) }} {{ "Desfijar" if thread.is_pinned else "Fijar" }}</button>
+          </form>
+        {% endif %}
+        <form method="post" action="{{ url_for('forum.toggle_close', thread_id=thread.id) }}">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <button class="btn btn-sm btn-outline" type="submit">{{ icon("lock", 14) }} {{ "Reabrir" if thread.is_closed else "Cerrar hilo" }}</button>
+        </form>
+        <form method="post" action="{{ url_for('forum.delete_thread', thread_id=thread.id) }}"
+              data-confirm="¿Eliminar el hilo y todas sus respuestas? Esta acción no se puede deshacer.">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <button class="btn btn-sm btn-danger" type="submit">{{ icon("trash", 14) }} Eliminar</button>
+        </form>
+      </div>
+      {% endif %}
+    </article>
+
+    <h2 class="replies-title">{{ posts|length }} respuesta{{ "s" if posts|length != 1 }}</h2>
+
+    {% for p in posts %}
+      <article class="card post" id="r{{ p.id }}">
+        {{ author_line(p.author_name, p.author_department, p.author_role, p.created_at) }}
+        <div class="post-body">{{ p.body }}</div>
+        {% if can_moderate(p.author_id) %}
+          <div class="post-tools">
+            <form method="post" action="{{ url_for('forum.delete_post', post_id=p.id) }}"
+                  data-confirm="¿Eliminar esta respuesta?">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <button class="btn-link small" type="submit">Eliminar respuesta</button>
+            </form>
+          </div>
+        {% endif %}
+      </article>
+    {% else %}
+      <p class="muted">Todavía no hay respuestas. ¡Sé el primero en ayudar!</p>
+    {% endfor %}
+
+    {% if thread.is_closed %}
+      <div class="card notice">{{ icon("lock") }} <p>Este hilo está cerrado y no admite nuevas respuestas.</p></div>
+    {% else %}
+      <form class="card form reply-form" id="responder" method="post" action="{{ url_for('forum.reply', thread_id=thread.id) }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <label>Tu respuesta
+          <textarea name="body" rows="5" required minlength="10" maxlength="{{ texto_max }}"
+                    placeholder="Escribe tu respuesta…"></textarea>
+        </label>
+        <div><button class="btn btn-primary" type="submit">Responder</button></div>
+      </form>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

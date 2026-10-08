@@ -1,0 +1,22 @@
+# Entorno virtual y cachés de Python
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Base de datos local (se regenera con datos de prueba al arrancar)
+instance/
+
+# Variables de entorno locales
+.env
+
+# Sistema / editores
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+
+# Configuración local de Claude Code
+.claude/

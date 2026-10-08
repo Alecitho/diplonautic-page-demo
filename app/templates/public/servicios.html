@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Servicios{% endblock %}
+{% block content %}
+<section class="page-head">
+  <div class="container">
+    <h1>Servicios</h1>
+    <p>Instalación, reparación y mantenimiento de los sistemas de tu embarcación.</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="cards">
+      {% for s in servicios %}
+      <article class="card service-card">
+        <span class="service-icon">{{ icon(s.icono, 28) }}</span>
+        <h3>{{ s.titulo }}</h3>
+        <p>{{ s.texto }}</p>
+      </article>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="section section-alt">
+  <div class="container">
+    <div class="section-head">
+      <h2>Cómo trabajamos</h2>
+    </div>
+    <ol class="steps">
+      <li><strong>Diagnóstico</strong><span>Revisamos la embarcación en su amarre y te enviamos un informe.</span></li>
+      <li><strong>Presupuesto</strong><span>Cerrado y detallado, sin sorpresas.</span></li>
+      <li><strong>Intervención</strong><span>Planificada para que la embarcación esté el menor tiempo parada.</span></li>
+      <li><strong>Seguimiento</strong><span>Garantía de 2 años y recordatorios de mantenimiento.</span></li>
+    </ol>
+  </div>
+</section>
+{% endblock %}

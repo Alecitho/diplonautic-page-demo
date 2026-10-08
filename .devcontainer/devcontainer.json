@@ -1,0 +1,39 @@
+{
+  // Entorno de GitHub Codespaces / Dev Containers para la DEMO de Diplonautic.
+  // Al crear el codespace se instalan las dependencias y, al conectarse,
+  // se arranca la web en el puerto 5000.
+  "name": "Diplonautic DEMO",
+  "image": "mcr.microsoft.com/devcontainers/python:3.12",
+
+  "containerEnv": {
+    // Escuchar en todas las interfaces del contenedor para el reenvío de puertos
+    "HOST": "0.0.0.0",
+    // Confiar en las cabeceras X-Forwarded-* del proxy de Codespaces
+    "TRUST_PROXY": "1"
+  },
+
+  "postCreateCommand": "pip install --user -r requirements.txt",
+  "postAttachCommand": {
+    "web": "python run.py"
+  },
+
+  "forwardPorts": [5000],
+  "portsAttributes": {
+    "5000": {
+      "label": "Diplonautic DEMO",
+      "onAutoForward": "openBrowser"
+    }
+  },
+
+  "customizations": {
+    "vscode": {
+      "extensions": ["ms-python.python"],
+      "settings": {
+        "python.testing.pytestEnabled": true
+      }
+    },
+    "codespaces": {
+      "openFiles": ["README.md"]
+    }
+  }
+}
