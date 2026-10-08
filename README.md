@@ -10,6 +10,16 @@ DEMO funcional de la web corporativa de **Diplonautic** (reparación e instalaci
 - **Foro interno** solo para usuarios verificados: hilos con título, autor y fecha, respuestas, categorías (duda, aviso, incidencia), búsqueda y moderación.
 - **Panel de administración** de usuarios.
 
+### Resumen en un minuto
+
+| Pregunta              | Respuesta                                                                                  |
+|-----------------------|--------------------------------------------------------------------------------------------|
+| ¿Cómo se arranca?     | `iniciar.bat` (Windows) o `python run.py` → <http://127.0.0.1:5000>. La BD de prueba se crea sola. |
+| ¿Por qué Flask + SQLite? | Poco código, sin servicios externos y fácil de leer de principio a fin.                 |
+| ¿Cómo se organiza?    | Un blueprint por zona: `public`, `auth`, `forum`, `admin`. SQL directo en cada vista.      |
+| ¿Cómo se controla el acceso? | `load_logged_in_user` carga el usuario en cada petición y los decoradores `login_required` → `verified_required` → `admin_required` protegen las vistas. |
+| ¿Cómo se dan de alta los empleados? | Registro con correo corporativo y verificación, y además alta directa por el administrador (ver *Decisión: alta de usuarios*). |
+
 📘 Documentación completa en PDF:
 - [Manual técnico](docs/Manual_Tecnico_Diplonautic.pdf): stack, arquitectura, modelo de datos, rutas, seguridad, pruebas y flujo con Git.
 - [Manual de usuario](docs/Manual_Usuario_Diplonautic.pdf): guía paso a paso con capturas.
@@ -75,7 +85,7 @@ flask --app app init-db
 | Framework web     | Flask 3.1 (blueprints, sesiones firmadas)            |
 | Base de datos     | SQLite con SQL parametrizado (`app/schema.sql`)      |
 | Seguridad         | Werkzeug (hash scrypt), CSRF propio, autoescape      |
-| Pruebas           | pytest (45 pruebas) + GitHub Actions                 |
+| Pruebas           | pytest (47 pruebas) + GitHub Actions                 |
 | Control versiones | Git + GitHub (ramas por funcionalidad y Pull Requests) |
 
 ### Decisión: alta de usuarios
