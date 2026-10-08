@@ -10,6 +10,16 @@ DEMO funcional de la web corporativa de **Diplonautic** (reparación e instalaci
 - **Foro interno** solo para usuarios verificados: hilos con título, autor y fecha, respuestas, categorías (duda, aviso, incidencia), búsqueda y moderación.
 - **Panel de administración** de usuarios.
 
+## Capturas
+
+| Web pública | Foro interno |
+|---|---|
+| ![Portada de la web pública](docs/capturas/01_inicio.jpg) | ![Listado de hilos del foro](docs/capturas/06_foro_listado.jpg) |
+| **Hilo con respuestas** | **Panel de administración** |
+| ![Hilo del foro con respuestas](docs/capturas/07_foro_hilo.jpg) | ![Gestión de usuarios del administrador](docs/capturas/11_admin_usuarios.jpg) |
+
+## Puesta en marcha
+
 ### En la nube, sin instalar nada (GitHub Codespaces)
 
 1. Pulsar el botón **Abrir en GitHub Codespaces** de arriba (o **Code → Codespaces → Create codespace on main**).
@@ -60,7 +70,8 @@ Modelo **mixto**: los empleados se registran con su correo corporativo (`@diplon
 
 ## Documentación
 
-Los manuales PDF de `docs/` se generaron con un script auxiliar que no forma parte de la DEMO, por eso no se incluye en el repositorio.
+- [Manual de usuario](docs/Manual_Usuario_Diplonautic.pdf): guía paso a paso de cada pantalla.
+- [`docs/capturas/`](docs/capturas): capturas de todas las pantallas de la DEMO.
 
 ## Uso de IA
 
