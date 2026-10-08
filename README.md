@@ -1,6 +1,6 @@
 # Diplonautic · DEMO web corporativa
 
-[![Abrir en GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/Alecitho/diplonautic-demo-refactor?quickstart=1)
+[![Abrir en GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/Alecitho/diplonautic-page-demo?quickstart=1)
 
 DEMO funcional de la web corporativa de **Diplonautic** (reparación e instalación de sistemas náuticos) con:
 
