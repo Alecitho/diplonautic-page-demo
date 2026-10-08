@@ -1,6 +1,6 @@
 # Diplonautic · DEMO web corporativa
 
-[![Abrir en GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/Alecitho/diplonautic-demo?quickstart=1)
+[![Abrir en GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/Alecitho/diplonautic-demo-refactor?quickstart=1)
 
 DEMO funcional de la web corporativa de **Diplonautic** (reparación e instalación de sistemas náuticos) con:
 
@@ -49,8 +49,8 @@ Ejecutar `iniciar.bat`: crea el entorno virtual, instala dependencias, abre el n
 #### Manual (cualquier sistema)
 
 ```bash
-git clone https://github.com/Alecitho/diplonautic-demo.git
-cd diplonautic-demo
+git clone https://github.com/Alecitho/diplonautic-demo-refactor.git
+cd diplonautic-demo-refactor
 python -m venv .venv
 .venv\Scripts\activate            # Windows  (macOS/Linux: source .venv/bin/activate)
 pip install -r requirements.txt
