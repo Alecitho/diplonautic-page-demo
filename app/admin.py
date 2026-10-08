@@ -3,8 +3,8 @@ from flask import Blueprint, abort, flash, g, redirect, render_template, request
 from werkzeug.security import generate_password_hash
 
 from .auth import (DEPARTAMENTOS, ROLES, admin_required, issue_verification_token,
-                   render_demo_email, validate_email, validate_password)
-from .db import get_db, now_iso
+                   read_user_form, render_demo_email, validate_user_form)
+from .db import get_db, get_or_404, now_iso
 
 bp = Blueprint("admin", __name__, url_prefix="/admin")
 
@@ -18,10 +18,7 @@ FILTROS = {
 
 
 def get_user_or_404(user_id):
-    user = get_db().execute("SELECT * FROM users WHERE id = ?", (user_id,)).fetchone()
-    if user is None:
-        abort(404)
-    return user
+    return get_or_404("SELECT * FROM users WHERE id = ?", (user_id,))
 
 
 def back_to_list():
@@ -61,32 +58,20 @@ def new_user():
     form = {"name": "", "email": "", "department": "", "role": "empleado", "verified": True}
     if request.method == "POST":
         form = {
-            "name": request.form.get("name", "").strip(),
-            "email": request.form.get("email", "").strip().lower(),
-            "department": request.form.get("department", ""),
+            **read_user_form(),
             "role": request.form.get("role", "empleado"),
             "verified": request.form.get("verified") == "on",
         }
         password = request.form.get("password", "")
-        db = get_db()
-
-        error = None
-        if len(form["name"]) < 3:
-            error = "Indica el nombre completo."
-        elif form["role"] not in ROLES:
+        error = validate_user_form(form, password)
+        if error is None and form["role"] not in ROLES:
             error = "Rol no válido."
-        elif form["department"] not in DEPARTAMENTOS:
-            error = "Selecciona un departamento."
-        else:
-            error = validate_email(form["email"]) or validate_password(password)
-        if error is None and db.execute(
-                "SELECT 1 FROM users WHERE email = ?", (form["email"],)).fetchone():
-            error = "Ya existe una cuenta con ese correo."
 
         if error:
             flash(error, "error")
         else:
             now = now_iso()
+            db = get_db()
             db.execute(
                 "INSERT INTO users (name, email, password_hash, role, department,"
                 " is_verified, verified_at, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
@@ -133,8 +118,9 @@ def change_role(user_id):
     if role not in ROLES:
         abort(400)
     if not forbid_self(user, "cambiar el rol de"):
-        get_db().execute("UPDATE users SET role = ? WHERE id = ?", (role, user_id))
-        get_db().commit()
+        db = get_db()
+        db.execute("UPDATE users SET role = ? WHERE id = ?", (role, user_id))
+        db.commit()
         flash(f"{user['name']} ahora es {role}.", "success")
     return back_to_list()
 
@@ -145,7 +131,8 @@ def toggle_active(user_id):
     user = get_user_or_404(user_id)
     if not forbid_self(user, "desactivar"):
         nuevo = 0 if user["is_active"] else 1
-        get_db().execute("UPDATE users SET is_active = ? WHERE id = ?", (nuevo, user_id))
-        get_db().commit()
+        db = get_db()
+        db.execute("UPDATE users SET is_active = ? WHERE id = ?", (nuevo, user_id))
+        db.commit()
         flash(f"Cuenta de {user['name']} {'activada' if nuevo else 'desactivada'}.", "success")
     return back_to_list()

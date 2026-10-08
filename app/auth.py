@@ -55,6 +55,31 @@ def validate_email(email):
     return None
 
 
+def read_user_form():
+    """Campos comunes del formulario de usuario (registro y alta por el administrador)."""
+    return {
+        "name": request.form.get("name", "").strip(),
+        "email": request.form.get("email", "").strip().lower(),
+        "department": request.form.get("department", ""),
+    }
+
+
+def validate_user_form(form, password):
+    """Validación común del registro y del alta por el administrador.
+
+    Devuelve un mensaje de error o None si los datos son válidos.
+    """
+    if len(form["name"]) < 3:
+        return "Indica el nombre completo."
+    if form["department"] not in DEPARTAMENTOS:
+        return "Selecciona un departamento."
+    error = validate_email(form["email"]) or validate_password(password)
+    if error is None and get_db().execute(
+            "SELECT 1 FROM users WHERE email = ?", (form["email"],)).fetchone():
+        error = "Ya existe una cuenta con ese correo."
+    return error
+
+
 def issue_verification_token(user_id):
     """Genera un token nuevo, guarda su hash y devuelve el token en claro para el correo."""
     token = secrets.token_urlsafe(32)
@@ -141,31 +166,16 @@ def register():
 
     form = {"name": "", "email": "", "department": ""}
     if request.method == "POST":
-        form = {
-            "name": request.form.get("name", "").strip(),
-            "email": request.form.get("email", "").strip().lower(),
-            "department": request.form.get("department", ""),
-        }
+        form = read_user_form()
         password = request.form.get("password", "")
-        password2 = request.form.get("password2", "")
-        db = get_db()
-
-        error = None
-        if len(form["name"]) < 3:
-            error = "Indica tu nombre completo."
-        elif form["department"] not in DEPARTAMENTOS:
-            error = "Selecciona tu departamento."
-        else:
-            error = validate_email(form["email"]) or validate_password(password)
-        if error is None and password != password2:
+        error = validate_user_form(form, password)
+        if error is None and password != request.form.get("password2", ""):
             error = "Las contraseñas no coinciden."
-        if error is None and db.execute(
-                "SELECT 1 FROM users WHERE email = ?", (form["email"],)).fetchone():
-            error = "Ya existe una cuenta con ese correo."
 
         if error:
             flash(error, "error")
         else:
+            db = get_db()
             cur = db.execute(
                 "INSERT INTO users (name, email, password_hash, role, department, created_at)"
                 " VALUES (?, ?, ?, 'empleado', ?, ?)",

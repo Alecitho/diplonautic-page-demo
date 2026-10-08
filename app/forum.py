@@ -4,7 +4,7 @@ import math
 from flask import Blueprint, abort, flash, g, redirect, render_template, request, url_for
 
 from .auth import admin_required, verified_required
-from .db import get_db, now_iso
+from .db import get_db, get_or_404, now_iso
 
 bp = Blueprint("forum", __name__, url_prefix="/foro")
 
@@ -19,14 +19,11 @@ TEXTO_MIN, TEXTO_MAX = 10, 5000
 
 
 def get_thread_or_404(thread_id):
-    thread = get_db().execute(
+    return get_or_404(
         "SELECT t.*, u.name AS author_name, u.department AS author_department, u.role AS author_role"
         " FROM threads t JOIN users u ON u.id = t.author_id WHERE t.id = ?",
         (thread_id,),
-    ).fetchone()
-    if thread is None:
-        abort(404)
-    return thread
+    )
 
 
 def can_moderate(author_id):
@@ -154,9 +151,10 @@ def reply(thread_id):
 @admin_required
 def toggle_pin(thread_id):
     thread = get_thread_or_404(thread_id)
-    get_db().execute("UPDATE threads SET is_pinned = ? WHERE id = ?",
-                     (0 if thread["is_pinned"] else 1, thread_id))
-    get_db().commit()
+    db = get_db()
+    db.execute("UPDATE threads SET is_pinned = ? WHERE id = ?",
+               (0 if thread["is_pinned"] else 1, thread_id))
+    db.commit()
     flash("Hilo desfijado." if thread["is_pinned"] else "Hilo fijado al inicio del foro.", "success")
     return redirect(url_for("forum.thread", thread_id=thread_id))
 
@@ -167,9 +165,10 @@ def toggle_close(thread_id):
     thread = get_thread_or_404(thread_id)
     if not can_moderate(thread["author_id"]):
         abort(403)
-    get_db().execute("UPDATE threads SET is_closed = ? WHERE id = ?",
-                     (0 if thread["is_closed"] else 1, thread_id))
-    get_db().commit()
+    db = get_db()
+    db.execute("UPDATE threads SET is_closed = ? WHERE id = ?",
+               (0 if thread["is_closed"] else 1, thread_id))
+    db.commit()
     flash("Hilo reabierto." if thread["is_closed"] else "Hilo cerrado: ya no admite respuestas.", "success")
     return redirect(url_for("forum.thread", thread_id=thread_id))
 
@@ -180,8 +179,9 @@ def delete_thread(thread_id):
     thread = get_thread_or_404(thread_id)
     if not can_moderate(thread["author_id"]):
         abort(403)
-    get_db().execute("DELETE FROM threads WHERE id = ?", (thread_id,))
-    get_db().commit()
+    db = get_db()
+    db.execute("DELETE FROM threads WHERE id = ?", (thread_id,))
+    db.commit()
     flash("Hilo eliminado.", "success")
     return redirect(url_for("forum.index"))
 
@@ -189,12 +189,11 @@ def delete_thread(thread_id):
 @bp.route("/respuesta/<int:post_id>/eliminar", methods=("POST",))
 @verified_required
 def delete_post(post_id):
-    post = get_db().execute("SELECT * FROM posts WHERE id = ?", (post_id,)).fetchone()
-    if post is None:
-        abort(404)
+    post = get_or_404("SELECT * FROM posts WHERE id = ?", (post_id,))
     if not can_moderate(post["author_id"]):
         abort(403)
-    get_db().execute("DELETE FROM posts WHERE id = ?", (post_id,))
-    get_db().commit()
+    db = get_db()
+    db.execute("DELETE FROM posts WHERE id = ?", (post_id,))
+    db.commit()
     flash("Respuesta eliminada.", "success")
     return redirect(url_for("forum.thread", thread_id=post["thread_id"]))

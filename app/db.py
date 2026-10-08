@@ -4,12 +4,20 @@ import sqlite3
 from datetime import datetime
 
 import click
-from flask import current_app, g
+from flask import abort, current_app, g
 
 
 def now_iso():
     """Fecha y hora local actual en formato ISO (sin microsegundos)."""
     return datetime.now().isoformat(timespec="seconds")
+
+
+def get_or_404(sql, params):
+    """Devuelve la única fila de la consulta o responde 404 si no existe."""
+    row = get_db().execute(sql, params).fetchone()
+    if row is None:
+        abort(404)
+    return row
 
 
 def get_db():

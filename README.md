@@ -1,6 +1,6 @@
 # Diplonautic · DEMO web corporativa
 
-[![Abrir en GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/Alecitho/diplonautic-demo?quickstart=1)
+[![Abrir en GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/Alecitho/diplonautic-demo-refactor?quickstart=1)
 
 DEMO funcional de la web corporativa de **Diplonautic** (reparación e instalación de sistemas náuticos) con:
 
@@ -9,6 +9,16 @@ DEMO funcional de la web corporativa de **Diplonautic** (reparación e instalaci
 - **Roles** `empleado` y `administrador`, y **estados** de cuenta: verificado, no verificado y desactivado.
 - **Foro interno** solo para usuarios verificados: hilos con título, autor y fecha, respuestas, categorías (duda, aviso, incidencia), búsqueda y moderación.
 - **Panel de administración** de usuarios.
+
+### Resumen en un minuto
+
+| Pregunta              | Respuesta                                                                                  |
+|-----------------------|--------------------------------------------------------------------------------------------|
+| ¿Cómo se arranca?     | `iniciar.bat` (Windows) o `python run.py` → <http://127.0.0.1:5000>. La BD de prueba se crea sola. |
+| ¿Por qué Flask + SQLite? | Poco código, sin servicios externos y fácil de leer de principio a fin.                 |
+| ¿Cómo se organiza?    | Un blueprint por zona: `public`, `auth`, `forum`, `admin`. SQL directo en cada vista.      |
+| ¿Cómo se controla el acceso? | `load_logged_in_user` carga el usuario en cada petición y los decoradores `login_required` → `verified_required` → `admin_required` protegen las vistas. |
+| ¿Cómo se dan de alta los empleados? | Registro con correo corporativo y verificación, y además alta directa por el administrador (ver *Decisión: alta de usuarios*). |
 
 📘 Documentación completa en PDF:
 - [Manual técnico](docs/Manual_Tecnico_Diplonautic.pdf): stack, arquitectura, modelo de datos, rutas, seguridad, pruebas y flujo con Git.
@@ -39,8 +49,8 @@ Ejecutar `iniciar.bat`: crea el entorno virtual, instala dependencias, abre el n
 #### Manual (cualquier sistema)
 
 ```bash
-git clone https://github.com/Alecitho/diplonautic-demo.git
-cd diplonautic-demo
+git clone https://github.com/Alecitho/diplonautic-demo-refactor.git
+cd diplonautic-demo-refactor
 python -m venv .venv
 .venv\Scripts\activate            # Windows  (macOS/Linux: source .venv/bin/activate)
 pip install -r requirements.txt
@@ -75,8 +85,7 @@ flask --app app init-db
 | Framework web     | Flask 3.1 (blueprints, sesiones firmadas)            |
 | Base de datos     | SQLite con SQL parametrizado (`app/schema.sql`)      |
 | Seguridad         | Werkzeug (hash scrypt), CSRF propio, autoescape      |
-| Pruebas           | pytest (45 pruebas) + GitHub Actions                 |
-| Documentación     | ReportLab (manuales PDF generados por script)        |
+| Pruebas           | pytest (47 pruebas) + GitHub Actions                 |
 | Control versiones | Git + GitHub (ramas por funcionalidad y Pull Requests) |
 
 ### Decisión: alta de usuarios
@@ -93,7 +102,7 @@ app/
   security.py   protección CSRF                seed.py    datos de prueba
   schema.sql    esquema de la BD               templates/ static/
 tests/          pruebas con pytest
-docs/           manuales PDF, capturas y generador
+docs/           manuales PDF y capturas
 .github/        plantilla de PR y CI
 .devcontainer/  entorno de GitHub Codespaces
 ```
@@ -106,11 +115,7 @@ python -m pytest
 
 ## Documentación
 
-Los manuales se regeneran desde el código (rutas, esquema, versiones, pruebas e historial de Git se leen del proyecto):
-
-```bash
-python docs/generar_manuales.py
-```
+Los manuales PDF de `docs/` se generaron con un script auxiliar que no forma parte de la DEMO, por eso no se incluye en el repositorio.
 
 ## Flujo de trabajo con Git
 
