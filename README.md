@@ -76,7 +76,6 @@ flask --app app init-db
 | Base de datos     | SQLite con SQL parametrizado (`app/schema.sql`)      |
 | Seguridad         | Werkzeug (hash scrypt), CSRF propio, autoescape      |
 | Pruebas           | pytest (45 pruebas) + GitHub Actions                 |
-| Documentación     | ReportLab (manuales PDF generados por script)        |
 | Control versiones | Git + GitHub (ramas por funcionalidad y Pull Requests) |
 
 ### Decisión: alta de usuarios
@@ -93,7 +92,7 @@ app/
   security.py   protección CSRF                seed.py    datos de prueba
   schema.sql    esquema de la BD               templates/ static/
 tests/          pruebas con pytest
-docs/           manuales PDF, capturas y generador
+docs/           manuales PDF y capturas
 .github/        plantilla de PR y CI
 .devcontainer/  entorno de GitHub Codespaces
 ```
@@ -106,11 +105,7 @@ python -m pytest
 
 ## Documentación
 
-Los manuales se regeneran desde el código (rutas, esquema, versiones, pruebas e historial de Git se leen del proyecto):
-
-```bash
-python docs/generar_manuales.py
-```
+Los manuales PDF de `docs/` se generaron con un script auxiliar que no forma parte de la DEMO, por eso no se incluye en el repositorio.
 
 ## Flujo de trabajo con Git
 
