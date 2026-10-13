@@ -12,6 +12,7 @@ CATEGORIAS = {
     "duda": "Duda",
     "aviso": "Aviso",
     "incidencia": "Incidencia técnica",
+    "Reclamos": "Reclamo de cliente",
 }
 POR_PAGINA = 10
 TITULO_MIN, TITULO_MAX = 5, 120

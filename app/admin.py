@@ -1,6 +1,8 @@
 """Panel de administración: gestión de usuarios (solo rol administrador)."""
-from flask import Blueprint, abort, flash, g, redirect, render_template, request, url_for
-from werkzeug.security import generate_password_hash
+from flask import (  # type: ignore[import-not-found]
+    Blueprint, abort, flash, g, redirect, render_template, request, url_for,
+)
+from werkzeug.security import generate_password_hash  # type: ignore[import-not-found]
 
 from .auth import (DEPARTAMENTOS, ROLES, admin_required, issue_verification_token,
                    read_user_form, render_demo_email, validate_user_form)

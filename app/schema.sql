@@ -27,7 +27,7 @@ CREATE TABLE threads (
     id                INTEGER PRIMARY KEY AUTOINCREMENT,
     title             TEXT    NOT NULL,
     body              TEXT    NOT NULL,
-    category          TEXT    NOT NULL CHECK (category IN ('duda', 'aviso', 'incidencia')),
+    category          TEXT    NOT NULL CHECK (category IN ('duda', 'aviso', 'incidencia', 'Reclamos')),
     author_id         INTEGER NOT NULL REFERENCES users (id),
     is_pinned         INTEGER NOT NULL DEFAULT 0 CHECK (is_pinned IN (0, 1)),
     is_closed         INTEGER NOT NULL DEFAULT 0 CHECK (is_closed IN (0, 1)),
