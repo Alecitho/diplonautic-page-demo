@@ -14,7 +14,7 @@ CATEGORIAS = {
     "incidencia": "Incidencia técnica",
     "Reclamos": "Reclamo de cliente",
 }
-POR_PAGINA = 10
+POR_PAGINA = 5
 TITULO_MIN, TITULO_MAX = 5, 120
 TEXTO_MIN, TEXTO_MAX = 10, 5000
 
